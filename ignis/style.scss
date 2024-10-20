@@ -1,0 +1,97 @@
+* {
+    all: unset;
+    font-weight: bold;
+}
+$bg: transparent;
+$fg: #ffffff;
+$accent: #946c9e;
+$active: #ffffff;
+$inactive: rgba(255, 255, 255, 0.5);
+$unactive: rgba(255, 255, 255, 0.5);
+
+.bar {
+    padding: 0.4rem 1rem;
+    background-color: $bg;
+    color: $fg;
+}
+
+.workspaces {
+    padding: 0.2rem;
+}
+
+.workspace {
+    padding: 0 0.55rem;
+    transition: 0.3s;
+    color: $inactive;
+}
+
+.workspace:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.workspace.active {
+    color: $active;
+}
+
+.workspace.inactive {
+    color: $inactive;
+}
+
+.tray-item {
+    all: unset;
+    color: $fg;
+}
+
+.clock {
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+    color: $fg;
+}
+
+.date {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    color: $fg;
+}
+
+popover.menu {
+    contents {
+        background-color: rgba(148, 108, 158, 0.1);
+        padding: 0.35rem;
+        border-radius: 1rem;
+        color: $fg;
+        modelbutton {
+            transition: 0.3s;
+            border-radius: 0.5rem;
+            padding: 0.25rem 1rem;
+            color: $fg;
+        }
+        modelbutton:hover {
+            background-color: rgba(148, 108, 158, 0.2);
+        }
+        separator {
+            background-color: rgba(148, 108, 158, 0.2);
+            min-height: 0.1rem;
+            margin: 0.5rem 0;
+        }
+        label:disabled {
+            color: $unactive;
+        }
+        arrow {
+            opacity: 0.7;
+            color: $accent;
+
+            &:hover {
+                background: none;
+            }
+
+            &.left {
+                -gtk-icon-source: -gtk-icontheme("go-previous-symbolic");
+            }
+
+            &.right {
+                -gtk-icon-source: -gtk-icontheme("go-next-symbolic");
+            }
+        }
+    }
+}
