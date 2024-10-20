@@ -1,1 +1,1 @@
-[showcase](https://files.catbox.moe/thumbs/t_at0vfq.png)
+[showcase](https://files.catbox.moe/at0vfq.png)
