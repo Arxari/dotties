@@ -13,6 +13,9 @@ source ~/.config/fish/functions/prompt.fish
 source /home/arx/.config/fish/.exports
 # source /home/arx/.config/fish/functions/shocks.fish
 
+# defaults
+export EDITOR=nvim
+
 # Aliases
 alias upd='paru -Syyu --noconfirm && flatpak update -y && determination-update'
 alias updshut='refup && paru -Syyu --noconfirm && flatpak update -y && shutdown'
@@ -31,20 +34,20 @@ alias android='scrcpy --otg -s R7AX101RFRJ' # Mouse and keyboard control on Phon
 alias shockclock='python3 /home/arx/Playspace/Code/Python/shockclock/clock.py'
 alias play='python3 /home/arx/Playspace/Code/OpenShock/immersive-asmr/player.py'
 
-# Micro Aliases
-alias fishrc='micro ~/.config/fish/config.fish'
-alias promptconf='nvim ~/.config/fish/functions/prompt.fish'
-alias alacrittyconf='nvim ~/.config/alacritty/alacritty.toml'
-alias hyprconf='nvim ~/.config/hypr/hyprland.conf'
-alias nvimconf='nvim ~/.config/nvim/init.lua'
+# Editor aliases
+alias fishrc='$EDITOR ~/.config/fish/config.fish'
+alias promptconf='$EDITOR ~/.config/fish/functions/prompt.fish'
+alias alacrittyconf='$EDITOR ~/.config/alacritty/alacritty.toml'
+alias hyprconf='$EDITOR ~/.config/hypr/hyprland.conf'
+alias nvimconf='$EDITOR ~/.config/nvim/init.lua'
 ##############################################
-alias zenconf='micro ~/.zen/5e8upekq.Arxari/chrome/userChrome.css'
-alias ffconf='micro ~/.config/fastfetch/config.jsonc'
-alias cavaconf='micro ~/.config/cava/config'
-alias starconf='micro ~/.config/starship.toml'
-alias ignispy='micro /home/arx/.config/ignis/config.py'
-alias igniscss='/home/arx/.config/ignis/style.scss'
-alias discordtheme='micro /home/arx/.var/app/dev.vencord.Vesktop/config/vesktop/themes/midnight.theme.css'
+alias zenconf='$EDITOR ~/.zen/5e8upekq.Arxari/chrome/userChrome.css'
+alias ffconf='$EDITOR ~/.config/fastfetch/config.jsonc'
+alias cavaconf='$EDITOR ~/.config/cava/config'
+alias starconf='$EDITOR ~/.config/starship.toml'
+alias ignispy='$EDITOR /home/arx/.config/ignis/config.py'
+alias igniscss='$EDITOR /home/arx/.config/ignis/style.scss'
+alias discordtheme='$EDITOR /home/arx/.var/app/dev.vencord.Vesktop/config/vesktop/themes/midnight.theme.css'
 
 # cd aliases
 alias cdcode='cd ~/Playspace/Code'
