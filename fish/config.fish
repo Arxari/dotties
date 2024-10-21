@@ -13,7 +13,7 @@ source ~/.config/fish/functions/prompt.fish
 source /home/arx/.config/fish/.exports
 # source /home/arx/.config/fish/functions/shocks.fish
 
-eval "(zoxide init fish)"
+eval "$(zoxide init fish)"
 
 # defaults
 export EDITOR=nvim
