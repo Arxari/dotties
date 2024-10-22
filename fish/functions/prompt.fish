@@ -1,7 +1,7 @@
 function fish_prompt
     set_color blue
     echo -n (prompt_pwd)
-    
+
     if git rev-parse --is-inside-work-tree >/dev/null 2>&1
         set_color normal
         echo -n ' '
@@ -11,15 +11,14 @@ function fish_prompt
         echo -n ' '
         set_color yellow
         echo -n (git branch --show-current)
-        
+
         set -l git_status (git status --porcelain)
         if test -n "$git_status"
             set_color FF69B4  # Light pink
             echo -n '*'
-            # Removed the counting of modified, added, and deleted files
         end
     end
-    
+
     echo
 
     set -l lang (detect_language)
@@ -46,6 +45,6 @@ function detect_language
     else if test -f CMakeLists.txt
         echo 00599C  # C++
     else
-        echo c678dd  # Default (as requested)
+        echo c678dd  # Default
     end
 end
