@@ -78,9 +78,16 @@ $unactive: rgba(255, 255, 255, 0.5);
 }
 
 .clock {
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin-right: 0.5rem;
     color: $fg;
+    transition: 0.3s;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 }
 
 .date {
