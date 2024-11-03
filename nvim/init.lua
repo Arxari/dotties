@@ -11,8 +11,6 @@ vim.keymap.set('n', '<C-s>', ':write<CR>', { desc = 'Save file' })
 vim.keymap.set('n', '<C-q>', ':quit<CR>', { desc = 'Quit Neovim' })
 vim.keymap.set({ 'n', 'i' }, '<C-z>', '<Cmd>undo<CR>', { desc = 'Undo' })
 vim.keymap.set({ 'n', 'i' }, '<C-y>', '<Cmd>redo<CR>', { desc = 'Redo' })
-vim.keymap.set({ 'n', 'v' }, '<M-c>', '"+y', { desc = 'Copy to system clipboard' })
-vim.keymap.set({ 'n', 'i' }, '<M-v>', '<C-r>+', { desc = 'Paste from system clipboard' })
 
 -- Automatically go into insert mode when opening a file
 vim.api.nvim_create_autocmd("BufEnter", {
