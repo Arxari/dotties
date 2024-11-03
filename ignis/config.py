@@ -10,7 +10,6 @@ from ignis.services.hyprland import HyprlandService
 from ignis.services.notifications import NotificationService
 from ignis.services.mpris import MprisService, MprisPlayer
 
-# Initialize services
 app = IgnisApp.get_default()
 audio = AudioService.get_default()
 system_tray = SystemTrayService.get_default()
@@ -18,7 +17,6 @@ hyprland = HyprlandService.get_default()
 notifications = NotificationService.get_default()
 mpris = MprisService.get_default()
 
-# Apply CSS
 app.apply_css(f"{Utils.get_current_dir()}/style.scss")
 
 def get_hyprland_clients():
@@ -86,12 +84,27 @@ def focus_media_player(player: MprisPlayer) -> None:
     else:
         print(f"Could not find workspace for {player_name}")
 
+class WorkspaceState:
+    def __init__(self):
+        self.current_workspace = 1
+        self.direction = "right"  # def dir
+
+    def update_direction(self, new_workspace):
+        if new_workspace > self.current_workspace:
+            self.direction = "right"
+        elif new_workspace < self.current_workspace:
+            self.direction = "left"
+        self.current_workspace = new_workspace
+        return self.direction
+
+workspace_state = WorkspaceState()
+
 def workspace_button(workspace_id: int) -> Widget.Button:
     current_workspaces = {w["id"]: w for w in hyprland.workspaces}
     workspace = current_workspaces.get(workspace_id)
 
     if workspace_id == hyprland.active_workspace["id"]:
-        icon = "ᗧ"
+        icon = "ᗧ" if workspace_state.direction == "right" else "ᗤ"
         css_class = "active"
     elif workspace and any(
         client.get("workspace", {}).get("id", client.get("workspace")) == workspace_id
@@ -100,12 +113,16 @@ def workspace_button(workspace_id: int) -> Widget.Button:
         icon = "ᗣ"
         css_class = "has-windows"
     else:
-        icon = "•"
+        icon = "•" # yummy
         css_class = "inactive"
+
+    def on_workspace_click(widget, id=workspace_id):
+        workspace_state.update_direction(id)
+        hyprland.switch_to_workspace(id)
 
     widget = Widget.Button(
         css_classes=["workspace", css_class],
-        on_click=lambda x, id=workspace_id: hyprland.switch_to_workspace(id),
+        on_click=on_workspace_click,
         child=Widget.Label(
             label=icon,
             css_classes=["workspace-icon"],
@@ -117,11 +134,13 @@ def scroll_workspaces(direction: str) -> None:
     current = hyprland.active_workspace["id"]
     if direction == "up":
         target = current - 1
+        workspace_state.update_direction(target)
         hyprland.switch_to_workspace(target)
     else:
         target = current + 1
         if target == 11:
             return
+        workspace_state.update_direction(target)
         hyprland.switch_to_workspace(target)
 
 def workspaces() -> Widget.EventBox:
