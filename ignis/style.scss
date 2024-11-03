@@ -1,7 +1,13 @@
+$font: "PixelCode" !default;
+$font-size: 12 !default;
+
 * {
     all: unset;
     font-weight: bold;
+    font-family: $font;
+    font-size: #{$font-size}px;
 }
+
 $bg: transparent;
 $fg: #ffffff;
 $accent: #946c9e;
@@ -20,9 +26,28 @@ $unactive: rgba(255, 255, 255, 0.5);
 }
 
 .workspace {
-    padding: 0 0.55rem;
+    padding: 0 0.35rem;
     transition: 0.3s;
-    color: $inactive;
+
+    .workspace-icon {
+        font-size: 14px;
+    }
+
+    &.active .workspace-icon {
+        color: #e0af68; // Pac-Man --> orange/yellow
+    }
+
+    &.has-windows .workspace-icon {
+        color: #1793d1; // Ghost --> blue
+    }
+
+    &.inactive .workspace-icon {
+        color: rgba(255, 255, 255, 0.5); // Dots are semi-transparent white
+    }
+
+    &:hover .workspace-icon {
+        color: rgba(255, 255, 255, 0.8);
+    }
 }
 
 .workspace:hover {
@@ -35,6 +60,16 @@ $unactive: rgba(255, 255, 255, 0.5);
 
 .workspace.inactive {
     color: $inactive;
+}
+
+.media-player-button {
+    transition: 0.3s;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 }
 
 .tray-item {
