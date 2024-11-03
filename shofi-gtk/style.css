@@ -3,6 +3,18 @@ window {
     color: #a9b1d6;
 }
 
+/* Hide scrollbar */
+scrolledwindow undershoot.top,
+scrolledwindow undershoot.bottom,
+scrolledwindow overshoot.top,
+scrolledwindow overshoot.bottom,
+scrolledwindow scrollbar {
+    opacity: 0;
+    -gtk-icon-size: 0;
+    min-width: 0;
+    min-height: 0;
+}
+
 .search-box {
     margin: 8px 12px;
     padding: 0;
