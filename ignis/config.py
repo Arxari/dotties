@@ -116,13 +116,36 @@ def current_notification() -> Widget.Label:
     )
 
 
-def clock() -> Widget.Label:
-    # poll for current time every second
-    return Widget.Label(
+class ClockState: # yes it's useless, but it looks cool as fuck
+    def __init__(self):
+        self.use_24h = True
+
+    def toggle_format(self):
+        self.use_24h = not self.use_24h
+        return self.use_24h
+
+    def get_current_format(self):
+        return "%H:%M" if self.use_24h else "%I:%M %p"
+
+clock_state = ClockState()
+
+def clock() -> Widget.Button:
+    def update_time(self):
+        current_format = clock_state.get_current_format()
+        return datetime.datetime.now().strftime(current_format)
+
+    def on_click(widget):
+        clock_state.toggle_format()
+        time_poll.update()
+
+    time_poll = Utils.Poll(1, update_time)
+
+    return Widget.Button(
         css_classes=["clock"],
-        label=Utils.Poll(
-            1, lambda self: datetime.datetime.now().strftime("%H:%M")
-        ).bind("output"),
+        on_click=on_click,
+        child=Widget.Label(
+            label=time_poll.bind("output")
+        )
     )
 
 def date() -> Widget.Label:
