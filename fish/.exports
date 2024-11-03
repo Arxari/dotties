@@ -1,28 +1,29 @@
 # XDG Directories
-set -gx XDG_DATA_HOME "$HOME/.local/share"
-set -gx XDG_CONFIG_HOME "$HOME/.config"
-set -gx XDG_STATE_HOME "$HOME/.local/state"
-set -gx XDG_CACHE_HOME "$HOME/.cache"
+set -Ux XDG_DATA_HOME "$HOME/.local/share"
+set -Ux XDG_CONFIG_HOME "$HOME/.config"
+set -Ux XDG_STATE_HOME "$HOME/.local/state"
+set -Ux XDG_CACHE_HOME "$HOME/.cache"
 
 # Paths for Applications and Tools
-set -gx ANDROID_USER_HOME "$XDG_DATA_HOME/android"
-set -gx CARGO_HOME "$XDG_DATA_HOME/cargo"
-set -gx CUDA_CACHE_PATH "$XDG_CACHE_HOME/nv"
-set -gx DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
-set -gx DOTNET_CLI_HOME "$XDG_DATA_HOME/dotnet"
-set -gx GOPATH "$XDG_DATA_HOME/go"
-set -gx GRADLE_USER_HOME "$XDG_DATA_HOME/gradle"
-set -gx NUGET_PACKAGES "$XDG_CACHE_HOME/NuGetPackages"
-set -gx RUSTUP_HOME "$XDG_DATA_HOME/rustup"
-set -gx VOLTA_HOME "$XDG_DATA_HOME/volta"
-set -gx W3M_DIR "$XDG_DATA_HOME/w3m"
+set -Ux ANDROID_USER_HOME "$XDG_DATA_HOME/android"
+set -Ux CARGO_HOME "$XDG_DATA_HOME/cargo"
+set -Ux CUDA_CACHE_PATH "$XDG_CACHE_HOME/nv"
+set -Ux DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
+set -Ux DOTNET_CLI_HOME "$XDG_DATA_HOME/dotnet"
+set -Ux GOPATH "$XDG_DATA_HOME/go"
+set -Ux GRADLE_USER_HOME "$XDG_DATA_HOME/gradle"
+set -Ux NUGET_PACKAGES "$XDG_CACHE_HOME/NuGetPackages"
+set -Ux RUSTUP_HOME "$XDG_DATA_HOME/rustup"
+set -Ux VOLTA_HOME "$XDG_DATA_HOME/volta"
+set -Ux W3M_DIR "$XDG_DATA_HOME/w3m"
+set -Ux VIRTUALFISH_HOME "$XDG_DATA_HOME/virtualenvs"
 
 # Additional Paths
-set -gx PATH "$HOME/.local/share/gem/ruby/3.2.0/bin" $PATH
-set -gx PATH $PATH "/home/arx/.local/bin"
-set -gx PATH $PATH "/home/arx/.spicetify"
-set -gx PATH "$HOME/.rbenv/bin" $PATH
+set -Ux PATH "$HOME/.local/share/gem/ruby/3.2.0/bin" $PATH
+set -Ux PATH $PATH "/home/arx/.local/bin"
+set -Ux PATH $PATH "/home/arx/.spicetify"
+set -Ux PATH "$HOME/.rbenv/bin" $PATH
 
 # Editor Configuration
-set -gx EDITOR micro
-set -gx VISUAL micro
+set -Ux EDITOR micro
+set -Ux VISUAL micro

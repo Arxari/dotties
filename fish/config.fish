@@ -28,6 +28,8 @@ alias funistall='flatpak uninstall --delete-data'
 alias snap='sudo timeshift --create'
 alias goodbye='shutdown'
 alias ff='fastfetch'
+alias fftrans='hyfetch -p transgender'
+alias ffbi='hyfetch -p bisexual'
 alias plz='sudo'
 alias lemmeout='hyprctl dispatch exit'
 alias android='scrcpy --otg -s R7AX101RFRJ' # Mouse and keyboard control on Phone
@@ -80,6 +82,7 @@ alias rancat="/home/arx/Playspace/Code/sh/rancat.sh/rancat.sh"
 alias ddclock="/home/arx/Playspace/Code/sh/ddclock.sh/ddclock.sh"
 alias ezsh='~/Playspace/Code/sh/ezsh/ezsh.sh'
 alias lzps='~/Playspace/Code/sh/lzps.sh/lzps.sh'
+alias fpk='~/Playspace/Code/sh/fpk/fpk.sh'
 
 # PS; If you're reading this you're a cutie patootie
 
