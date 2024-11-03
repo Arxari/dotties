@@ -10,6 +10,7 @@ from ignis.services.hyprland import HyprlandService
 from ignis.services.notifications import NotificationService
 from ignis.services.mpris import MprisService, MprisPlayer
 
+# Initialize services
 app = IgnisApp.get_default()
 audio = AudioService.get_default()
 system_tray = SystemTrayService.get_default()
@@ -17,6 +18,7 @@ hyprland = HyprlandService.get_default()
 notifications = NotificationService.get_default()
 mpris = MprisService.get_default()
 
+# Apply CSS
 app.apply_css(f"{Utils.get_current_dir()}/style.scss")
 
 def get_hyprland_clients():
@@ -232,12 +234,21 @@ def clock() -> Widget.Button:
     )
 
 
-def date() -> Widget.Label:
-    return Widget.Label(
+def date() -> Widget.Button:
+    def launch_calendar(widget):
+        try:
+            subprocess.Popen(['gnome-calendar'])
+        except subprocess.SubprocessError as e:
+            print(f"Error launching gnome-calendar: {e}")
+
+    return Widget.Button(
         css_classes=["date"],
-        label=Utils.Poll(
-            60, lambda self: datetime.datetime.now().strftime("%Y-%m-%d")
-        ).bind("output"),
+        on_click=launch_calendar,
+        child=Widget.Label(
+            label=Utils.Poll(
+                60, lambda self: datetime.datetime.now().strftime("%Y-%m-%d")
+            ).bind("output"),
+        )
     )
 
 def speaker_volume() -> Widget.Box:
