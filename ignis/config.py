@@ -7,14 +7,12 @@ from ignis.app import IgnisApp
 from ignis.services.audio import AudioService
 from ignis.services.system_tray import SystemTrayService, SystemTrayItem
 from ignis.services.hyprland import HyprlandService
-from ignis.services.notifications import NotificationService
 from ignis.services.mpris import MprisService, MprisPlayer
 
 app = IgnisApp.get_default()
 audio = AudioService.get_default()
 system_tray = SystemTrayService.get_default()
 hyprland = HyprlandService.get_default()
-notifications = NotificationService.get_default()
 mpris = MprisService.get_default()
 
 app.apply_css(f"{Utils.get_current_dir()}/style.scss")
@@ -87,7 +85,7 @@ def focus_media_player(player: MprisPlayer) -> None:
 class WorkspaceState:
     def __init__(self):
         self.current_workspace = 1
-        self.direction = "right"  # def dir
+        self.direction = "right"  # Default direction
 
     def update_direction(self, new_workspace):
         if new_workspace > self.current_workspace:
@@ -211,15 +209,6 @@ def client_title() -> Widget.Label:
         ),
     )
 
-def current_notification() -> Widget.Label:
-    return Widget.Label(
-        ellipsize="end",
-        max_width_chars=20,
-        label=notifications.bind(
-            "notifications", lambda value: value[0].summary if len(value) > 0 else None
-        ),
-    )
-
 class ClockState: # yes it's useless, but it looks cool as fuck
     def __init__(self):
         self.use_24h = True
@@ -331,8 +320,6 @@ def left() -> Widget.Box:
 def center() -> Widget.Box:
     return Widget.Box(
         child=[
-            current_notification(),
-            Widget.Separator(vertical=True, css_classes=["middle-separator"]),
             media(),
         ],
         spacing=10,
