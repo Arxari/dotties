@@ -41,6 +41,10 @@ $unactive: rgba(255, 255, 255, 0.5);
         color: #1793d1; // Ghost --> blue
     }
 
+    &.has-spotify .workspace-icon {
+        color: #6ed117; // Ghost --> Spotify green
+    }
+
     &.inactive .workspace-icon {
         color: rgba(255, 255, 255, 0.5); // Dots are semi-transparent white
     }

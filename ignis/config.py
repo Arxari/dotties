@@ -59,6 +59,8 @@ def focus_media_player(player: MprisPlayer) -> None:
         "rhythmbox": "Rhythmbox",
         "clementine": "Clementine",
         "audacious": "Audacious",
+        "zen-twilight": "zen-twilight",  # doesn't work for some reason, that's why the one below exists
+        "mozilla": "zen-twilight",  # temp fix
     }
 
     player_name = player.identity.lower().split()[0]
@@ -101,7 +103,14 @@ def workspace_button(workspace_id: int) -> Widget.Button:
     current_workspaces = {w["id"]: w for w in hyprland.workspaces}
     workspace = current_workspaces.get(workspace_id)
 
+    has_spotify = any(
+        client.get("class", "").lower() == "spotify" and
+        (client.get("workspace", {}).get("id", client.get("workspace")) == workspace_id)
+        for client in get_hyprland_clients()
+    )
+
     if workspace_id == hyprland.active_workspace["id"]:
+        workspace_state.update_direction(workspace_id)
         icon = "ᗧ" if workspace_state.direction == "right" else "ᗤ"
         css_class = "active"
     elif workspace and any(
@@ -110,12 +119,13 @@ def workspace_button(workspace_id: int) -> Widget.Button:
     ):
         icon = "ᗣ"
         css_class = "has-windows"
+        if has_spotify:
+            css_class = "has-spotify"
     else:
-        icon = "•" # yummy
+        icon = "•"
         css_class = "inactive"
 
     def on_workspace_click(widget, id=workspace_id):
-        workspace_state.update_direction(id)
         hyprland.switch_to_workspace(id)
 
     widget = Widget.Button(
