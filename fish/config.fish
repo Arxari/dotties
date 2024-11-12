@@ -23,6 +23,7 @@ alias upd='paru -Syyu --noconfirm && flatpak update -y && determination-update'
 alias updshut='refup && paru -Syyu --noconfirm && flatpak update -y && shutdown'
 alias refup='sudo reflector --verbose --country CZ,DE --protocol https --sort rate --latest 20 --download-timeout 300 --save /etc/pacman.d/mirrorlist'
 alias cc='paru -Scc'
+alias regen='sudo mkinitcpio -P'
 alias chezdit='chezmoi edit'
 alias funistall='flatpak uninstall --delete-data'
 alias snap='sudo timeshift --create'
@@ -37,11 +38,13 @@ alias android='scrcpy --otg -s R7AX101RFRJ' # Mouse and keyboard control on Phon
 # Script Aliases
 alias shockclock='python3 /home/arx/Playspace/Code/Python/shockclock/clock.py'
 alias play='python3 /home/arx/Playspace/Code/OpenShock/immersive-asmr/player.py'
+alias setwp='python3 /home/arx/Playspace/Code/Python/setwp-local/setwp.py'
 
 # Editor aliases
 alias fishrc='$EDITOR ~/.config/fish/config.fish'
 alias promptconf='$EDITOR ~/.config/fish/functions/prompt.fish'
 alias alacrittyconf='$EDITOR ~/.config/alacritty/alacritty.toml'
+alias footconf='$EDITOR /home/arx/.config/foot/foot.ini'
 alias hyprconf='$EDITOR ~/.config/hypr/hyprland.conf'
 alias nvimconf='$EDITOR ~/.config/nvim/init.lua'
 ##############################################
