@@ -283,7 +283,11 @@ def speaker_volume() -> Widget.Box:
     )
 
 def tray_item(item: SystemTrayItem) -> Widget.Button | None:
-    if "spotify" in item.id.lower():
+    with open("/tmp/ignis-tray.log", "a") as f:
+        print(f"Tray item detected - ID: {item.id}, Icon: {item.icon}, Tooltip: {item.tooltip}", file=f)
+
+    # blacklist
+    if "spotify" in item.id.lower() or "iwgtk" in item.id.lower():
         return None
 
     if item.menu:
@@ -291,10 +295,15 @@ def tray_item(item: SystemTrayItem) -> Widget.Button | None:
     else:
         menu = None
 
+    if "nm-applet" in item.id.lower():
+        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/wifi.png", pixel_size=24)
+    else:
+        icon_widget = Widget.Icon(image=item.bind("icon"), pixel_size=24)
+
     return Widget.Button(
         child=Widget.Box(
             child=[
-                Widget.Icon(image=item.bind("icon"), pixel_size=24),
+                icon_widget,
                 menu,
             ]
         ),
