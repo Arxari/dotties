@@ -8,63 +8,148 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
-    "source": "~/.local/share/fastfetch/ascii/arch.txt",
     "padding": {
       "top": 2,
-      "right": 6,
+      "right": 8,
     },
   },
-  "display": {
-    "separator": " > ",
-  },
+  "separator": " > ",
+  "binaryPrefix": "si",
   "modules": [
     {
       "type": "title",
       "color": {
-        "user": "32", // = color2
-        "at": "37",
-        "host": "32",
+        "user": "38;2;91;206;250",
+        "at": "38;2;255;255;255",
+        "host": "38;2;245;169;184",
       },
     },
     "break",
+    "break",
+    // First 3 blue entries
     {
       "type": "os",
       "key": "distribution ",
-      "keyColor": "33",
+      "keyColor": "38;2;91;206;250",
     },
     {
       "type": "kernel",
-      "key": "linux kernel ",
-      "keyColor": "33",
+      "key": "kernel ",
+      "keyColor": "38;2;91;206;250",
     },
+    {
+      "type": "uptime",
+      "key": "uptime ",
+      "keyColor": "38;2;91;206;250",
+    },
+    // Next 4 pink entries
     {
       "type": "packages",
       "format": "{} (pacman), {} (flatpak)",
       "key": "packages ",
-      "keyColor": "33",
+      "keyColor": "38;2;245;169;184",
     },
     {
       "type": "shell",
-      "key": "unix shell ",
-      "keyColor": "33",
+      "key": "shell ",
+      "keyColor": "38;2;245;169;184",
     },
     {
       "type": "terminal",
       "key": "terminal ",
-      "keyColor": "33",
+      "keyColor": "38;2;245;169;184",
     },
     {
       "type": "wm",
       "format": "{} ({3})",
       "key": "window manager ",
-      "keyColor": "33",
+      "keyColor": "38;2;245;169;184",
+    },
+    // Next 5 white entries
+    {
+      "type": "de",
+      "key": "desktop env ",
+      "keyColor": "38;2;255;255;255",
+    },
+    {
+      "type": "cpu",
+      "key": "cpu ",
+      "keyColor": "38;2;255;255;255",
+    },
+    {
+      "type": "gpu",
+      "key": "gpu ",
+      "keyColor": "38;2;255;255;255",
+    },
+    {
+      "type": "memory",
+      "key": "memory ",
+      "keyColor": "38;2;255;255;255",
+    },
+    {
+      "type": "swap",
+      "key": "swap ",
+      "keyColor": "38;2;255;255;255",
+    },
+    {
+      "type": "disk",
+      "key": "disk ",
+      "keyColor": "38;2;255;255;255",
+    },
+    // Next 4 pink entries
+    {
+      "type": "theme",
+      "key": "theme ",
+      "keyColor": "38;2;245;169;184",
+    },
+    {
+      "type": "icons",
+      "key": "icons ",
+      "keyColor": "38;2;245;169;184",
+    },
+    {
+      "type": "cursor",
+      "key": "cursor ",
+      "keyColor": "38;2;245;169;184",
+    },
+    {
+      "type": "font",
+      "key": "font ",
+      "keyColor": "38;2;245;169;184",
+    },
+    // Changed display and localip to pink
+    {
+      "type": "display",
+      "key": "display ",
+      "keyColor": "38;2;245;169;184",
+    },
+    {
+      "type": "localip",
+      "key": "local ip ",
+      "keyColor": "38;2;245;169;184",
+    },
+    {
+      "type": "battery",
+      "key": "battery ",
+      "keyColor": "38;2;255;255;255",
     },
     "break",
     {
-      "type": "colors",
-      "symbol": "square",
+      "type": "custom",
+      "keyColor": "38;2;91;206;250",
+      "format": "┌ Now Playing ────────────────────────────┐",
     },
-    "break",
+    {
+      "type": "media",
+      "keyColor": "38;2;245;169;184",
+      "key": " ",
+      "format": "│{artist} - {title}",
+    },
+    {
+      "type": "custom",
+      "keyColor": "38;2;91;206;250",
+      "format": "└─────────────────────────────────────────┘",
+    },
     "break",
   ],
 }
