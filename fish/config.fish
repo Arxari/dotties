@@ -10,20 +10,22 @@ set start_time (date +%s.%N)
 
 # source things
 source ~/.config/fish/functions/prompt.fish
-source /home/arx/.config/fish/.exports
+source ~/.config/fish/.exports
 # source /home/arx/.config/fish/functions/shocks.fish
 
 eval "$(zoxide init fish)"
 
 # defaults
-export EDITOR=nvim
+export EDITOR=micro
 
 # Aliases
 alias upd='paru -Syyu --noconfirm && flatpak update -y && determination-update'
+alias update='paru -Syyu --noconfirm && flatpak update -y && determination-update'
 alias updshut='refup && paru -Syyu --noconfirm && flatpak update -y && shutdown'
 alias refup='sudo reflector --verbose --country CZ,DE --protocol https --sort rate --latest 20 --download-timeout 300 --save /etc/pacman.d/mirrorlist'
 alias cc='paru -Scc'
 alias regen='sudo mkinitcpio -P'
+alias fvim='python3 ~/Playspace/Code/Python/fvim/fvim.py'
 alias chezdit='chezmoi edit'
 alias funistall='flatpak uninstall --delete-data'
 alias snap='sudo timeshift --create'
@@ -34,8 +36,11 @@ alias ffbi='hyfetch -p bisexual'
 alias plz='sudo'
 alias lemmeout='hyprctl dispatch exit'
 alias android='scrcpy --otg -s R7AX101RFRJ' # Mouse and keyboard control on Phone
+alias faru='paru -Slq | fzf --multi --preview "paru -Si {1}" | xargs -ro paru -S'
 
 # Script Aliases
+alias tex='python3 /home/arx/Playspace/Code/Python/texoxide/tex.py'
+alias shofi='/home/arx/Playspace/Code/sh/Shofi/shofi.sh'
 alias shockclock='python3 /home/arx/Playspace/Code/Python/shockclock/clock.py'
 alias play='python3 /home/arx/Playspace/Code/OpenShock/immersive-asmr/player.py'
 alias setwp='python3 /home/arx/Playspace/Code/Python/setwp-local/setwp.py'
@@ -77,7 +82,6 @@ alias repoman='~/Playspace/Code/sh/repoman/repoman.sh'
 alias lzfi="/home/arx/Playspace/Code/sh/lzfi.sh/lzfi.sh"
 alias determination-update="/home/arx/Playspace/Code/sh/determination.sh/determination-update.sh"
 alias desktopfinder="/home/arx/Playspace/Code/sh/desktopfinder.sh/desktopfinder.sh"
-alias shofi="/home/arx/Playspace/Code/sh/Shofi/shofi.sh"
 alias volumectl="/home/arx/Playspace/Code/sh/volumectl.sh"
 alias wisdom="/home/arx/Playspace/Code/sh/wisdom.sh"
 alias howtogit="/home/arx/Playspace/Code/sh/howtogit.sh/howtogit.sh"
@@ -96,3 +100,5 @@ set elapsed (math "$end_time - $start_time")
 set formatted_elapsed (printf "%.3f seconds" $elapsed)
 
 set -U fish_greeting "Launched in $formatted_elapsed"
+
+fish_add_path /home/arx/.spicetify

@@ -21,6 +21,7 @@ set -Ux VIRTUALFISH_HOME "$XDG_DATA_HOME/virtualenvs"
 # Additional Paths
 set -Ux PATH "$HOME/.local/share/gem/ruby/3.2.0/bin" $PATH
 set -Ux PATH $PATH "/home/arx/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
 set -Ux PATH $PATH "/home/arx/.spicetify"
 set -Ux PATH "$HOME/.rbenv/bin" $PATH
 
