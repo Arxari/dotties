@@ -1,0 +1,11 @@
+[general]
+wallpaper_dir = "/home/arx/Pictures/Wallpapers/musicpaper"
+check_interval = 5
+backend = "swww"
+swww_transition_type = "wave"
+swww_transition_duration = 0
+
+[song_wallpapers]
+"lost kitten" = "lostkitten.gif"
+"doomer weekend" = "mefrfr.png"
+"Track Name" = "name.jpg"
