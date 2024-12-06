@@ -8,6 +8,8 @@ from ignis.services.audio import AudioService
 from ignis.services.system_tray import SystemTrayService, SystemTrayItem
 from ignis.services.hyprland import HyprlandService
 from ignis.services.mpris import MprisService, MprisPlayer
+from dataclasses import dataclass
+from typing import Callable, Optional
 
 app = IgnisApp.get_default()
 audio = AudioService.get_default()
@@ -282,9 +284,77 @@ def speaker_volume() -> Widget.Box:
         ]
     )
 
+@dataclass
+class CustomTrayItem:
+    id: str
+    icon_path: str
+    tooltip: str
+    on_left_click: Optional[Callable] = None
+    on_right_click: Optional[Callable] = None
+
+class CustomTrayManager:
+    def __init__(self):
+        self._custom_items = {}
+
+    def add_item(self, item: CustomTrayItem):
+        self._custom_items[item.id] = item
+
+    def get_item(self, id: str) -> Optional[CustomTrayItem]:
+        return self._custom_items.get(id)
+
+    def get_all_items(self):
+        return self._custom_items.values()
+
+class FakeSystemTrayItem:
+    def __init__(self, custom_item: CustomTrayItem):
+        self.id = custom_item.id
+        self.icon = custom_item.icon_path
+        self.tooltip = custom_item.tooltip
+        self.menu = None
+        self._custom_item = custom_item
+
+    def bind(self, prop):
+        if prop == "icon":
+            return self.icon
+        elif prop == "tooltip":
+            return self.tooltip
+        return None
+
+    def connect(self, *args):
+        pass
+
+custom_tray_manager = CustomTrayManager()
+# -----------------------------------------------
+# Custom tray icons
+def launch_clipboard():
+    subprocess.run(['foot', '-e', 'bash', '-c', 'cliphist list | fzf --no-sort | cliphist decode | wl-copy'])
+
+clipboard_item = CustomTrayItem(
+    id="custom-clipboard",
+    icon_path="/home/arx/.config/ignis/icons/clipboard.png",
+    tooltip="fzf clipboard",
+    on_left_click=launch_clipboard
+)
+# -----------------------------------------------
+custom_tray_manager.add_item(clipboard_item)
+
 def tray_item(item: SystemTrayItem) -> Widget.Button | None:
     with open("/tmp/ignis-tray.log", "a") as f:
         print(f"Tray item detected - ID: {item.id}, Icon: {item.icon}, Tooltip: {item.tooltip}", file=f)
+
+    custom_item = custom_tray_manager.get_item(item.id)
+    if custom_item:
+        return Widget.Button(
+            child=Widget.Box(
+                child=[
+                    Widget.Icon(image=custom_item.icon_path, pixel_size=24)
+                ]
+            ),
+            tooltip_text=custom_item.tooltip,
+            on_click=lambda x: custom_item.on_left_click() if custom_item.on_left_click else None,
+            on_right_click=lambda x: custom_item.on_right_click() if custom_item.on_right_click else None,
+            css_classes=["tray-item", "custom-tray-item"],
+        )
 
     # blacklist
     if "spotify" in item.id.lower() or "iwgtk" in item.id.lower():
@@ -294,9 +364,15 @@ def tray_item(item: SystemTrayItem) -> Widget.Button | None:
         menu = item.menu.copy()
     else:
         menu = None
-
+    # icon override
     if "nm-applet" in item.id.lower():
         icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/wifi.png", pixel_size=24)
+    elif "qbittorent" in item.id.lower() or "qbit" in item.id.lower():
+        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/bean.png", pixel_size=24)
+    elif "steam" in item.id.lower() or "steam" in item.id.lower():
+        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/gamepad.png", pixel_size=24)
+    elif "vesktop" in item.id.lower() or "vencord" in item.id.lower():
+        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/messages.png", pixel_size=24)
     else:
         icon_widget = Widget.Icon(image=item.bind("icon"), pixel_size=24)
 
@@ -315,13 +391,20 @@ def tray_item(item: SystemTrayItem) -> Widget.Button | None:
     )
 
 def tray():
-    return Widget.Box(
+    box = Widget.Box(
         setup=lambda self: system_tray.connect(
             "added",
             lambda x, item: self.append(tray_item(item)) if tray_item(item) else None
         ),
         spacing=10,
     )
+
+    for custom_item in custom_tray_manager.get_all_items():
+        fake_item = FakeSystemTrayItem(custom_item)
+        box.append(tray_item(fake_item))
+
+    return box
+
 
 def speaker_slider() -> Widget.Scale:
     return Widget.Scale(
