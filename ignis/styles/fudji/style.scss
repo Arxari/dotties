@@ -1,0 +1,206 @@
+$font: "Noto Sans JP" !default;
+$font-size: 13 !default;
+
+* {
+    all: unset;
+    font-weight: bold;
+    font-family: $font;
+    font-size: #{$font-size}px;
+}
+
+$bg: #181818; // Wallpaper bg
+$fg: #f7f7f7; // White
+$accent: #d54c4c; // Deeper red
+$inactive: #2d2d2d; // Grey
+$grey-snow: #a0a0a0; // Greyish-white
+
+.bar {
+    padding: 0.4rem 1rem;
+    background-color: rgba($bg, 0.8);
+    color: $fg;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.workspaces {
+    padding: 0.2rem;
+}
+
+.hyprland-window-title {
+    transition: 0.3s ease;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+    background-color: rgba($inactive, 0.3);
+    color: $grey-snow;
+
+    &:hover {
+        background-color: rgba($accent, 0.2);
+        transform: scale(1.05);
+    }
+}
+
+.workspace {
+    padding: 0 0.35rem;
+    transition: 0.3s ease;
+
+    .workspace-icon {
+        font-family: "Noto Sans JP";
+        font-size: 14px;
+        transition: 0.3s ease;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.3rem;
+        background-color: rgba($inactive, 0.3);
+        color: $grey-snow;
+    }
+
+    $japanese_numbers: (
+        // 1 - 10
+        "一",
+        "二",
+        "三",
+        "四",
+        "五",
+        "六",
+        "七",
+        "八",
+        "九",
+        "十"
+    );
+
+    @for $i from 1 through 10 {
+        &:nth-child(#{$i}).active .workspace-icon::before {
+            content: nth($japanese_numbers, $i);
+        }
+    }
+
+    &.active .workspace-icon {
+        color: $accent;
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba($accent, 0.5);
+        background-color: rgba($accent, 0.2);
+    }
+
+    &.has-windows .workspace-icon {
+        color: $grey-snow;
+        opacity: 0.7;
+    }
+
+    &.has-spotify .workspace-icon {
+        color: lighten($accent, 10%);
+    }
+
+    &.inactive .workspace-icon {
+        color: rgba($fg, 0.3);
+    }
+
+    &:hover .workspace-icon {
+        color: $accent;
+        transform: scale(1.05);
+        background-color: rgba($accent, 0.15);
+    }
+}
+
+.media-player-button {
+    transition: 0.3s ease;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+    background-color: rgba($inactive, 0.3);
+
+    > * {
+        color: $grey-snow;
+        transition: 0.3s ease;
+    }
+
+    &:hover {
+        background-color: rgba($accent, 0.15);
+        transform: scale(1.05);
+
+        > * {
+            color: $accent;
+        }
+    }
+}
+
+.tray-item {
+    transition: 0.3s ease;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+    background-color: rgba($inactive, 0.3);
+    color: $grey-snow;
+
+    &:hover {
+        background-color: rgba($accent, 0.15);
+        transform: scale(1.05);
+    }
+}
+
+.volume-display {
+    transition: 0.3s ease;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+    background-color: rgba($inactive, 0.3);
+    color: $grey-snow;
+
+    &:hover {
+        background-color: rgba($accent, 0.15);
+        transform: scale(1.05);
+
+        > * {
+            color: $accent;
+        }
+    }
+}
+
+.clock,
+.date {
+    transition: 0.3s ease;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+    background-color: rgba($inactive, 0.3);
+    color: $grey-snow;
+
+    &:hover {
+        background-color: rgba($accent, 0.15);
+        transform: scale(1.05);
+
+        > * {
+            color: $accent;
+        }
+    }
+}
+
+.custom-tray-text {
+    font-family: "Noto Sans JP";
+    font-size: 14px;
+    transition: 0.3s ease;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+    background-color: rgba($inactive, 0.3);
+    color: $grey-snow;
+
+    &:hover {
+        color: $accent;
+        transform: scale(1.05);
+        background-color: rgba($accent, 0.15);
+    }
+}
+
+popover.menu {
+    contents {
+        background-color: rgba($bg, 0.9);
+        border: 1px solid rgba($grey-snow, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        border-radius: 0.5rem;
+        color: $fg;
+
+        modelbutton {
+            transition: 0.3s ease;
+            border-radius: 0.3rem;
+            padding: 0.25rem 1rem;
+            background-color: rgba($fg, 0.05);
+
+            &:hover {
+                background-color: rgba($accent, 0.2);
+            }
+        }
+    }
+}
