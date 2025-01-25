@@ -34,19 +34,19 @@ $unactive: rgba(255, 255, 255, 0.5);
     }
 
     &.active .workspace-icon {
-        color: #e0af68; // Pac-Man --> orange/yellow
+        color: #e0af68;
     }
 
     &.has-windows .workspace-icon {
-        color: #1793d1; // Ghost --> blue
+        color: #1793d1;
     }
 
     &.has-spotify .workspace-icon {
-        color: #6ed117; // Ghost --> Spotify green
+        color: #6ed117;
     }
 
     &.inactive .workspace-icon {
-        color: rgba(255, 255, 255, 0.5); // Dots are semi-transparent white
+        color: rgba(255, 255, 255, 0.5);
     }
 
     &:hover .workspace-icon {
@@ -111,6 +111,22 @@ $unactive: rgba(255, 255, 255, 0.5);
     }
 }
 
+.hyprland-window-title {
+    max-width: 40ch;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.volume-display {
+    display: flex;
+    align-items: center;
+}
+
+.volume-slider {
+    min-width: 100px;
+}
+
 .clock {
     font-size: 1rem;
     margin-right: 0.5rem;
@@ -139,7 +155,7 @@ $unactive: rgba(255, 255, 255, 0.5);
 
 popover.menu {
     contents {
-        background-color: #1a1a1a; /* Solid dark gray background */
+        background-color: #1a1a1a;
         padding: 0.35rem;
         border-radius: 1rem;
         color: $fg;
