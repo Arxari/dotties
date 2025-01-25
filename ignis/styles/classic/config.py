@@ -22,7 +22,6 @@ system_tray = SystemTrayService.get_default()
 hyprland = HyprlandService.get_default()
 mpris = MprisService.get_default()
 
-# Apply CSS
 app.apply_css(f"{Utils.get_current_dir()}/style.scss")
 
 def get_hyprland_clients():
@@ -92,8 +91,27 @@ def focus_media_player(player: MprisPlayer) -> None:
     else:
         print(f"Could not find workspace for {player_name}")
 
-custom_tray_manager = CustomTrayManager()
+# -------------- Custom tray manager ------------- #
+TRAY_CONFIG = {
+    "blacklist": [
+        "spotify",
+        "iwgtk"
+    ],
+    "icon_overrides": {
+        "nm-applet": "/home/arx/.config/ignis/icons/wifi.png",
+        "qbittorent": "/home/arx/.config/ignis/icons/bean.png",
+        "qbit": "/home/arx/.config/ignis/icons/bean.png",
+        "steam": "/home/arx/.config/ignis/icons/gamepad.png",
+        "vesktop": "/home/arx/.config/ignis/icons/messages.png",
+        "vencord": "/home/arx/.config/ignis/icons/messages.png"
+    }
+}
 
+custom_tray_manager = CustomTrayManager(
+    global_icon_overrides=TRAY_CONFIG.get("icon_overrides", {})
+)
+
+# Tray items
 def launch_clipboard():
     subprocess.run(['foot', '-e', 'bash', '-c', 'cliphist list | fzf --no-sort | cliphist decode | wl-copy'])
 
@@ -101,9 +119,35 @@ clipboard_item = CustomTrayItem(
     id="custom-clipboard",
     icon_path="/home/arx/.config/ignis/icons/clipboard.png",
     tooltip="fzf clipboard",
-    on_left_click=launch_clipboard
+    on_left_click=launch_clipboard,
+    text=None
 )
 custom_tray_manager.add_item(clipboard_item)
+
+def create_custom_tray_item(item, custom_tray_manager):
+    from custom_tray_module import create_tray_item
+
+    if any(bl in item.id.lower() for bl in TRAY_CONFIG.get("blacklist", [])):
+        return None
+
+    return create_tray_item(item, custom_tray_manager)
+
+def create_tray_widget(system_tray, custom_tray_manager):
+    box = Widget.Box(
+        setup=lambda self: system_tray.connect(
+            "added",
+            lambda x, item: self.append(create_custom_tray_item(item, custom_tray_manager))
+            if create_custom_tray_item(item, custom_tray_manager) else None
+        ),
+        spacing=10,
+    )
+
+    from custom_tray_module import FakeSystemTrayItem
+    for custom_item in custom_tray_manager.get_all_items():
+        fake_item = FakeSystemTrayItem(custom_item)
+        box.append(create_custom_tray_item(fake_item, custom_tray_manager))
+
+    return box
 
 class WorkspaceState:
     def __init__(self):
@@ -203,7 +247,6 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
         child=Widget.Box(
             spacing=10,
             child=[
-                Widget.Icon(image="audio-x-generic-symbolic"),
                 Widget.Label(
                     ellipsize="end",
                     max_width_chars=20,
@@ -217,6 +260,8 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
     return container
 
 def media() -> Widget.Box:
+    MPRIS_BLACKLIST = ["zen-twilight", "mozilla"]
+
     media_box = Widget.Box(
         spacing=10,
         child=[
@@ -228,14 +273,16 @@ def media() -> Widget.Box:
     )
 
     def on_player_added(service, player):
-        player_widget = mpris_title(player)
-        media_box.append(player_widget)
+        player_name = player.identity.lower().split()[0]
+        if player_name not in MPRIS_BLACKLIST:
+            player_widget = mpris_title(player)
+            media_box.append(player_widget)
 
-        def on_player_closed(widget):
-            media_box.remove(widget)
-            player.disconnect_by_func(on_player_closed)
+            def on_player_closed(widget):
+                media_box.remove(widget)
+                player.disconnect_by_func(on_player_closed)
 
-        player.connect("closed", on_player_closed)
+            player.connect("closed", on_player_closed)
 
     connection_id = mpris.connect("player-added", on_player_added)
 
@@ -251,6 +298,7 @@ def media() -> Widget.Box:
 
 def client_title() -> Widget.Label:
     return Widget.Label(
+        css_classes=["hyprland-window-title"],
         ellipsize="end",
         max_width_chars=40,
         label=hyprland.bind(
@@ -310,6 +358,7 @@ def date() -> Widget.Button:
 
 def speaker_volume() -> Widget.Box:
     return Widget.Box(
+        css_classes=["volume-display"],
         child=[
             Widget.Icon(
                 image=audio.speaker.bind("icon_name"),

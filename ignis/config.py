@@ -5,12 +5,17 @@ from ignis.widgets import Widget
 from ignis.utils import Utils
 from ignis.app import IgnisApp
 from ignis.services.audio import AudioService
-from ignis.services.system_tray import SystemTrayService, SystemTrayItem
+from ignis.services.system_tray import SystemTrayService
 from ignis.services.hyprland import HyprlandService
 from ignis.services.mpris import MprisService, MprisPlayer
-from dataclasses import dataclass
-from typing import Callable, Optional
 
+from custom_tray_module import (
+    CustomTrayManager,
+    CustomTrayItem,
+    create_tray_widget
+)
+
+# Initializing services
 app = IgnisApp.get_default()
 audio = AudioService.get_default()
 system_tray = SystemTrayService.get_default()
@@ -85,6 +90,64 @@ def focus_media_player(player: MprisPlayer) -> None:
             print(f"Error switching workspace: {e}")
     else:
         print(f"Could not find workspace for {player_name}")
+
+# -------------- Custom tray manager ------------- #
+TRAY_CONFIG = {
+    "blacklist": [
+        "spotify",
+        "iwgtk"
+    ],
+    "icon_overrides": {
+        "nm-applet": "/home/arx/.config/ignis/icons/wifi.png",
+        "qbittorent": "/home/arx/.config/ignis/icons/bean.png",
+        "qbit": "/home/arx/.config/ignis/icons/bean.png",
+        "steam": "/home/arx/.config/ignis/icons/gamepad.png",
+        "vesktop": "/home/arx/.config/ignis/icons/messages.png",
+        "vencord": "/home/arx/.config/ignis/icons/messages.png"
+    }
+}
+
+custom_tray_manager = CustomTrayManager(
+    global_icon_overrides=TRAY_CONFIG.get("icon_overrides", {})
+)
+
+# Tray items
+def launch_clipboard():
+    subprocess.run(['foot', '-e', 'bash', '-c', 'cliphist list | fzf --no-sort | cliphist decode | wl-copy'])
+
+clipboard_item = CustomTrayItem(
+    id="custom-clipboard",
+    icon_path="/home/arx/.config/ignis/icons/clipboard.png",
+    tooltip="fzf clipboard",
+    on_left_click=launch_clipboard,
+    text=None
+)
+custom_tray_manager.add_item(clipboard_item)
+
+def create_custom_tray_item(item, custom_tray_manager):
+    from custom_tray_module import create_tray_item
+
+    if any(bl in item.id.lower() for bl in TRAY_CONFIG.get("blacklist", [])):
+        return None
+
+    return create_tray_item(item, custom_tray_manager)
+
+def create_tray_widget(system_tray, custom_tray_manager):
+    box = Widget.Box(
+        setup=lambda self: system_tray.connect(
+            "added",
+            lambda x, item: self.append(create_custom_tray_item(item, custom_tray_manager))
+            if create_custom_tray_item(item, custom_tray_manager) else None
+        ),
+        spacing=10,
+    )
+
+    from custom_tray_module import FakeSystemTrayItem
+    for custom_item in custom_tray_manager.get_all_items():
+        fake_item = FakeSystemTrayItem(custom_item)
+        box.append(create_custom_tray_item(fake_item, custom_tray_manager))
+
+    return box
 
 class WorkspaceState:
     def __init__(self):
@@ -184,7 +247,6 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
         child=Widget.Box(
             spacing=10,
             child=[
-                Widget.Icon(image="audio-x-generic-symbolic"),
                 Widget.Label(
                     ellipsize="end",
                     max_width_chars=20,
@@ -198,21 +260,45 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
     return container
 
 def media() -> Widget.Box:
-    return Widget.Box(
+    MPRIS_BLACKLIST = ["zen-twilight", "mozilla"]
+
+    media_box = Widget.Box(
         spacing=10,
         child=[
             Widget.Label(
                 label="No media players",
                 visible=mpris.bind("players", lambda value: len(value) == 0),
             )
-        ],
-        setup=lambda self: mpris.connect(
-            "player-added", lambda x, player: self.append(mpris_title(player))
-        ),
+        ]
     )
+
+    def on_player_added(service, player):
+        player_name = player.identity.lower().split()[0]
+        if player_name not in MPRIS_BLACKLIST:
+            player_widget = mpris_title(player)
+            media_box.append(player_widget)
+
+            def on_player_closed(widget):
+                media_box.remove(widget)
+                player.disconnect_by_func(on_player_closed)
+
+            player.connect("closed", on_player_closed)
+
+    connection_id = mpris.connect("player-added", on_player_added)
+
+    def cleanup():
+        while media_box.get_first_child() != media_box.get_children()[0]:
+            media_box.remove(media_box.get_first_child())
+
+        mpris.disconnect(connection_id)
+
+    media_box.cleanup = cleanup
+
+    return media_box
 
 def client_title() -> Widget.Label:
     return Widget.Label(
+        css_classes=["hyprland-window-title"],
         ellipsize="end",
         max_width_chars=40,
         label=hyprland.bind(
@@ -221,7 +307,7 @@ def client_title() -> Widget.Label:
         ),
     )
 
-class ClockState: # yes it's useless, but it looks cool as fuck
+class ClockState:
     def __init__(self):
         self.use_24h = True
 
@@ -253,7 +339,6 @@ def clock() -> Widget.Button:
         )
     )
 
-
 def date() -> Widget.Button:
     def launch_calendar(widget):
         try:
@@ -273,6 +358,7 @@ def date() -> Widget.Button:
 
 def speaker_volume() -> Widget.Box:
     return Widget.Box(
+        css_classes=["volume-display"],
         child=[
             Widget.Icon(
                 image=audio.speaker.bind("icon_name"),
@@ -283,128 +369,6 @@ def speaker_volume() -> Widget.Box:
             ),
         ]
     )
-
-@dataclass
-class CustomTrayItem:
-    id: str
-    icon_path: str
-    tooltip: str
-    on_left_click: Optional[Callable] = None
-    on_right_click: Optional[Callable] = None
-
-class CustomTrayManager:
-    def __init__(self):
-        self._custom_items = {}
-
-    def add_item(self, item: CustomTrayItem):
-        self._custom_items[item.id] = item
-
-    def get_item(self, id: str) -> Optional[CustomTrayItem]:
-        return self._custom_items.get(id)
-
-    def get_all_items(self):
-        return self._custom_items.values()
-
-class FakeSystemTrayItem:
-    def __init__(self, custom_item: CustomTrayItem):
-        self.id = custom_item.id
-        self.icon = custom_item.icon_path
-        self.tooltip = custom_item.tooltip
-        self.menu = None
-        self._custom_item = custom_item
-
-    def bind(self, prop):
-        if prop == "icon":
-            return self.icon
-        elif prop == "tooltip":
-            return self.tooltip
-        return None
-
-    def connect(self, *args):
-        pass
-
-custom_tray_manager = CustomTrayManager()
-# -----------------------------------------------
-# Custom tray icons
-def launch_clipboard():
-    subprocess.run(['foot', '-e', 'bash', '-c', 'cliphist list | fzf --no-sort | cliphist decode | wl-copy'])
-
-clipboard_item = CustomTrayItem(
-    id="custom-clipboard",
-    icon_path="/home/arx/.config/ignis/icons/clipboard.png",
-    tooltip="fzf clipboard",
-    on_left_click=launch_clipboard
-)
-# -----------------------------------------------
-custom_tray_manager.add_item(clipboard_item)
-
-def tray_item(item: SystemTrayItem) -> Widget.Button | None:
-    with open("/tmp/ignis-tray.log", "a") as f:
-        print(f"Tray item detected - ID: {item.id}, Icon: {item.icon}, Tooltip: {item.tooltip}", file=f)
-
-    custom_item = custom_tray_manager.get_item(item.id)
-    if custom_item:
-        return Widget.Button(
-            child=Widget.Box(
-                child=[
-                    Widget.Icon(image=custom_item.icon_path, pixel_size=24)
-                ]
-            ),
-            tooltip_text=custom_item.tooltip,
-            on_click=lambda x: custom_item.on_left_click() if custom_item.on_left_click else None,
-            on_right_click=lambda x: custom_item.on_right_click() if custom_item.on_right_click else None,
-            css_classes=["tray-item", "custom-tray-item"],
-        )
-
-    # blacklist
-    if "spotify" in item.id.lower() or "iwgtk" in item.id.lower():
-        return None
-
-    if item.menu:
-        menu = item.menu.copy()
-    else:
-        menu = None
-    # icon override
-    if "nm-applet" in item.id.lower():
-        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/wifi.png", pixel_size=24)
-    elif "qbittorent" in item.id.lower() or "qbit" in item.id.lower():
-        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/bean.png", pixel_size=24)
-    elif "steam" in item.id.lower() or "steam" in item.id.lower():
-        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/gamepad.png", pixel_size=24)
-    elif "vesktop" in item.id.lower() or "vencord" in item.id.lower():
-        icon_widget = Widget.Icon(image="/home/arx/.config/ignis/icons/messages.png", pixel_size=24)
-    else:
-        icon_widget = Widget.Icon(image=item.bind("icon"), pixel_size=24)
-
-    return Widget.Button(
-        child=Widget.Box(
-            child=[
-                icon_widget,
-                menu,
-            ]
-        ),
-        setup=lambda self: item.connect("removed", lambda x: self.unparent()),
-        tooltip_text=item.bind("tooltip"),
-        on_click=lambda x: menu.popup() if menu else None,
-        on_right_click=lambda x: menu.popup() if menu else None,
-        css_classes=["tray-item"],
-    )
-
-def tray():
-    box = Widget.Box(
-        setup=lambda self: system_tray.connect(
-            "added",
-            lambda x, item: self.append(tray_item(item)) if tray_item(item) else None
-        ),
-        spacing=10,
-    )
-
-    for custom_item in custom_tray_manager.get_all_items():
-        fake_item = FakeSystemTrayItem(custom_item)
-        box.append(tray_item(fake_item))
-
-    return box
-
 
 def speaker_slider() -> Widget.Scale:
     return Widget.Scale(
@@ -429,7 +393,10 @@ def center() -> Widget.Box:
 
 def right() -> Widget.Box:
     return Widget.Box(
-        child=[tray(), speaker_volume(), date(), clock()],
+        child=[create_tray_widget(system_tray, custom_tray_manager),
+               speaker_volume(),
+               date(),
+               clock()],
         spacing=10,
     )
 
@@ -447,5 +414,6 @@ def bar(monitor_id: int = 0) -> Widget.Window:
         ),
     )
 
+# Create bar for each monitor
 for i in range(Utils.get_n_monitors()):
     bar(i)
