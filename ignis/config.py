@@ -236,17 +236,16 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
             lambda x: self.unparent(),
         ),
     )
-
     def on_click(widget):
         print("Media player clicked!")
         focus_media_player(player)
-
     button = Widget.Button(
         on_click=on_click,
         css_classes=["media-player-button"],
         child=Widget.Box(
             spacing=10,
             child=[
+                Widget.Icon(image="audio-x-generic-symbolic"),
                 Widget.Label(
                     ellipsize="end",
                     max_width_chars=20,
@@ -255,7 +254,6 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
             ],
         ),
     )
-
     container.append(button)
     return container
 
