@@ -298,7 +298,7 @@ def client_title() -> Widget.Label:
     return Widget.Label(
         css_classes=["hyprland-window-title"],
         ellipsize="end",
-        max_width_chars=40,
+        max_width_chars=100,
         label=hyprland.bind(
             "active_window",
             transform=lambda value: value.get("title", ""),

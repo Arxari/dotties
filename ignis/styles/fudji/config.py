@@ -251,7 +251,7 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
             child=[
                 Widget.Label(
                     ellipsize="end",
-                    max_width_chars=20,
+                    max_width_chars=100,
                     label=player.bind("title"),
                 ),
             ],

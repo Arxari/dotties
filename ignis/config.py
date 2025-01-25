@@ -248,7 +248,7 @@ def mpris_title(player: MprisPlayer) -> Widget.Box:
                 Widget.Icon(image="audio-x-generic-symbolic"),
                 Widget.Label(
                     ellipsize="end",
-                    max_width_chars=20,
+                    max_width_chars=100,
                     label=player.bind("title"),
                 ),
             ],
