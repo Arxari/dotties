@@ -1,0 +1,48 @@
+$font: "Noto Sans JP" !default;
+$font-size: 13 !default;
+
+* {
+    all: unset;
+    font-weight: bold;
+    font-family: $font;
+    font-size: #{$font-size}px;
+}
+
+.bar {
+    padding: 0.4rem 1rem;
+}
+
+.workspace .workspace-icon {
+    color: black;
+    padding: 0.2rem 0.4rem;
+}
+
+.workspace {
+    &.active .workspace-icon {
+        font-weight: bold;
+    }
+
+    &.inactive .workspace-icon {
+        opacity: 0.5;
+    }
+}
+
+.hyprland-window-title,
+.media-player-button,
+.tray-item,
+.volume-display,
+.clock,
+.date,
+.custom-tray-text {
+    color: black;
+}
+
+popover.menu {
+    contents {
+        color: black;
+
+        modelbutton {
+            color: black;
+        }
+    }
+}
